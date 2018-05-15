@@ -827,8 +827,10 @@ abstract class AbstractNode(val configuration: NodeConfiguration,
         val subject = CordaX500Name.build(certificates[0].subjectX500Principal)
         if (singleName != null && subject != singleName) {
             throw ConfigurationException("The name '$singleName' for $id doesn't match what's in the key store: $subject")
-        } else if (notaryConfig != null && notaryConfig.isClusterConfig && subject != notaryConfig.serviceLegalName) {
-            throw ConfigurationException("The name of the notary service '${notaryConfig.serviceLegalName}' for $id doesn't match what's in the key store: $subject")
+        } else if (notaryConfig != null && notaryConfig.isClusterConfig && notaryConfig.serviceLegalName != null && subject != notaryConfig.serviceLegalName) {
+            // Note that we're not checking if `notaryConfig.serviceLegalName` is not present for backwards compatibility.
+            throw ConfigurationException("The name of the notary service '${notaryConfig.serviceLegalName}' for $id doesn't match what's in the key store: $subject. "+
+                    "You might need to adjust the configuration of `notary.serviceLegalName`.")
         }
 
         val certPath = X509Utilities.buildCertPath(certificates)
