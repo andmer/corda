@@ -825,10 +825,10 @@ abstract class AbstractNode(val configuration: NodeConfiguration,
         }
 
         val subject = CordaX500Name.build(certificates[0].subjectX500Principal)
-        // TODO Include the name of the distributed notary, which the node is part of, in the notary config so that we
-        // can cross-check the identity we get from the key store
         if (singleName != null && subject != singleName) {
             throw ConfigurationException("The name '$singleName' for $id doesn't match what's in the key store: $subject")
+        } else if (notaryConfig != null && notaryConfig.isClusterConfig && subject != notaryConfig.serviceLegalName) {
+            throw ConfigurationException("The name of the notary service '${notaryConfig.serviceLegalName}' for $id doesn't match what's in the key store: $subject")
         }
 
         val certPath = X509Utilities.buildCertPath(certificates)

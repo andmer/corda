@@ -536,6 +536,7 @@ class DriverDSLImpl(
             val clusterAddresses = if (clusterAddress != null) listOf(clusterAddress) else emptyList()
             val config = NotaryConfig(
                     validating = spec.validating,
+                    serviceLegalName = spec.name,
                     raft = RaftConfig(nodeAddress = nodeAddress, clusterAddresses = clusterAddresses))
             return config.toConfigMap()
         }
